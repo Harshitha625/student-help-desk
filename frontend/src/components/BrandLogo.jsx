@@ -25,7 +25,7 @@ export default function BrandLogo({ className = '', light = false, linkTo = '/' 
       <div className="flex flex-col">
         <span
           className={`font-heading text-lg font-bold tracking-tight leading-tight ${
-            light ? 'text-white' : 'text-brand-dark'
+            light ? 'text-white' : 'text-brand-teal'
           }`}
         >
           Student <span className="text-brand-teal">HelpDesk</span>

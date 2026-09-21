@@ -14,7 +14,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { outpassService } from '../../services/outpassService';
-import { adminService } from '../../services/adminService';
+import api from '../../services/api';
 import StatusBadge from '../../components/StatusBadge';
 import LoadingSkeleton from '../../components/LoadingSkeleton';
 
@@ -27,12 +27,13 @@ export default function WardenHome() {
     const loadWardenData = async () => {
       try {
         setLoading(true);
-        const [outpassData, studentsData] = await Promise.all([
+        const [outpassData, studentsResponse] = await Promise.all([
           outpassService.getOutpasses({ status: 'Parent Verification' }),
-          adminService.getStudents(),
+          api.get('/api/auth/students/'),
         ]);
+
         setPendingOutpasses(outpassData.results || outpassData || []);
-        setStudentsCount(studentsData.length || 0);
+        setStudentsCount(studentsResponse.data?.length || 0);
       } catch (err) {
         console.error('Failed to load warden overview:', err);
       } finally {

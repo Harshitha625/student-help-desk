@@ -10,7 +10,7 @@ import {
   Hash, 
   CheckCircle2 
 } from 'lucide-react';
-import { adminService } from '../../services/adminService';
+import api from '../../services/api';
 import LoadingSkeleton, { EmptyState } from '../../components/LoadingSkeleton';
 
 export default function Students() {
@@ -21,7 +21,10 @@ export default function Students() {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const data = await adminService.getStudents(search);
+      const response = await api.get('/api/auth/students/', {
+  params: search ? { search } : {},
+});
+const data = response.data;
       setStudents(data || []);
     } catch (err) {
       console.error('Failed to load students:', err);

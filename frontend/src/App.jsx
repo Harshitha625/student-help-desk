@@ -159,6 +159,18 @@ export default function App() {
 
       {/* ==================== NOTIFICATIONS ==================== */}
 
+
+      <Route
+        path="/notifications/details"
+        element={
+          <ProtectedLayout
+            allowedRoles={['STUDENT', 'WARDEN', 'ADMIN']}
+          >
+            <NotificationDetails />
+          </ProtectedLayout>
+        }
+      />
+
       <Route
         path="/notifications/:id"
         element={

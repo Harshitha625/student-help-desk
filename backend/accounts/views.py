@@ -101,13 +101,13 @@ class StudentListView(APIView):
 
         if query:
             students = students.filter(
-                models.Q(username__icontains=query) |
-                models.Q(first_name__icontains=query) |
-                models.Q(last_name__icontains=query) |
-                models.Q(email__icontains=query) |
-                models.Q(student_profile__roll_number__icontains=query) |
-                models.Q(student_profile__hostel__icontains=query) |
-                models.Q(student_profile__department__icontains=query)
+                Q(username__icontains=query) |
+                Q(first_name__icontains=query) |
+                Q(last_name__icontains=query) |
+                Q(email__icontains=query) |
+                Q(student_profile__roll_number__icontains=query) |
+                Q(student_profile__hostel__icontains=query) |
+                Q(student_profile__department__icontains=query)
             )
 
         serializer = UserSerializer(students, many=True)

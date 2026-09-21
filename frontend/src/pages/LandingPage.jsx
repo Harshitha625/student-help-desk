@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+
 import {
   ArrowRight,
   CheckCircle2,
-  Clock,
   ShieldCheck,
   Building2,
   Utensils,
@@ -21,773 +21,1236 @@ import {
   AlertTriangle,
   Send,
   SlidersHorizontal,
-  ChevronRight,
   HelpCircle,
   Layers,
-} from 'lucide-react';
-import BrandLogo from '../components/BrandLogo';
+  Users,
+  Heart,
+  Instagram,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
 
 export default function LandingPage() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [activeRole, setActiveRole] = useState('student');
+  const [activeRole, setActiveRole] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
 
-  // Mouse spotlight glow
+  /*
+   * Automatically highlight one role at a time.
+   * Role cards themselves are NOT clickable.
+   */
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    const interval = setInterval(() => {
+      setActiveRole((current) => (current + 1) % 3);
+    }, 3500);
+
+    return () => clearInterval(interval);
   }, []);
+
+  /*
+   * Scroll animation:
+   * Elements enter from bottom when scrolling down
+   * and from top when scrolling back up.
+   */
+  const sectionAnimation = {
+    initial: {
+      opacity: 0,
+      y: 45,
+    },
+    whileInView: {
+      opacity: 1,
+      y: 0,
+    },
+    viewport: {
+      once: false,
+      amount: 0.12,
+    },
+    transition: {
+      duration: 0.7,
+      ease: "easeOut",
+    },
+  };
 
   const roles = [
     {
-      id: 'student',
-      title: 'Student Portal',
-      subtitle: 'Effortless campus requests & real-time tracking',
-      badge: 'Empowering Students',
-      color: 'from-brand-teal to-brand-teal-dark',
+      title: "Student Portal",
+      subtitle: "Simple campus requests and updates.",
+      badge: "For Students",
       icon: GraduationCap,
       features: [
-        'Lodge complaints with photos, priority & category',
-        'Option for 100% anonymous sensitive reports',
-        'Apply for digital weekend or emergency outpasses',
-        'Real-time status updates via slide-over notifications',
-        'Direct remarks and dialogue with campus technicians',
+        "Raise campus complaints",
+        "Apply for digital outpasses",
+        "Track request status",
+        "Receive notifications",
       ],
-      ctaText: 'Access Student Portal',
-      ctaLink: '/login',
+      ctaText: "Access Student Portal",
     },
     {
-      id: 'warden',
-      title: 'Warden Workspace',
-      subtitle: 'Streamlined outpass verification & hostel oversight',
-      badge: 'Residential Security',
-      color: 'from-brand-teal-dark to-brand-dark',
+      title: "Warden Workspace",
+      subtitle: "Manage hostel requests and outpasses.",
+      badge: "For Wardens",
       icon: ShieldCheck,
       features: [
-        'Dedicated outpass queue with one-click review',
-        'Parent phone verification logging & audit notes',
-        'Instant gate pass generation & student hostel roster',
-        'Direct communication channel with residential students',
-        'Comprehensive arrival and departure timestamps',
+        "Review outpass requests",
+        "Verify parent details",
+        "Approve or reject requests",
+        "Monitor hostel activity",
       ],
-      ctaText: 'Access Warden Desk',
-      ctaLink: '/login',
+      ctaText: "Access Warden Desk",
     },
     {
-      id: 'admin',
-      title: 'Campus Control Center',
-      subtitle: 'Centralized administration, analytics & reporting',
-      badge: 'Unified Governance',
-      color: 'from-brand-dark to-slate-900',
+      title: "Campus Control",
+      subtitle: "Organize requests across the campus.",
+      badge: "For Administrators",
       icon: SlidersHorizontal,
       features: [
-        'Live campus health analytics & resolution speed metrics',
-        'Assign tickets directly to maintenance staff & plumbers',
-        'Dual administration: Custom React suite + Native Django Admin',
-        'Broadcast emergency campus announcements instantly',
-        'Exportable category and hostel-wise resolution reports',
+        "Manage complaints",
+        "Assign requests",
+        "Monitor campus activity",
+        "View useful reports",
       ],
-      ctaText: 'Open Campus Control',
-      ctaLink: '/login',
+      ctaText: "Open Campus Control",
     },
   ];
 
   const problems = [
     {
-      title: 'Hostel Maintenance',
-      desc: 'Plumbing blockages, bathroom fittings, and structural repairs.',
+      title: "Hostel Maintenance",
+      desc: "Plumbing, electrical and room-related issues.",
       icon: Wrench,
-      accent: 'text-brand-teal',
-      bg: 'bg-teal-50',
     },
     {
-      title: 'Mess & Food Quality',
-      desc: 'Food hygiene feedback, catering schedules, and mess concerns.',
+      title: "Mess & Food",
+      desc: "Food quality, hygiene and mess concerns.",
       icon: Utensils,
-      accent: 'text-amber-600',
-      bg: 'bg-amber-50',
     },
     {
-      title: 'Campus Wi-Fi & Internet',
-      desc: 'Bandwidth issues, router down-times, and dorm connectivity.',
+      title: "Campus Wi-Fi",
+      desc: "Internet and connectivity problems.",
       icon: Wifi,
-      accent: 'text-sky-600',
-      bg: 'bg-sky-50',
     },
     {
-      title: 'Room & Infrastructure',
-      desc: 'Fan regulators, lighting, bed frames, and study furniture.',
+      title: "Room & Infrastructure",
+      desc: "Furniture, lighting and facility issues.",
       icon: Building2,
-      accent: 'text-emerald-600',
-      bg: 'bg-emerald-50',
     },
     {
-      title: 'Hostel Outpass Approvals',
-      desc: 'Eliminating paper slips with fast digital parent verification.',
+      title: "Outpass Requests",
+      desc: "Digital requests without paper forms.",
       icon: FileText,
-      accent: 'text-brand-gold',
-      bg: 'bg-yellow-50',
     },
     {
-      title: 'Academic & Labs Support',
-      desc: 'Projector failures, lab equipment issues, and classroom amenities.',
+      title: "Academic Support",
+      desc: "Classroom, lab and academic facility issues.",
       icon: GraduationCap,
-      accent: 'text-indigo-600',
-      bg: 'bg-indigo-50',
     },
     {
-      title: 'General Campus Grievances',
-      desc: 'Security requests, transport, sanitation, and safety concerns.',
+      title: "General Concerns",
+      desc: "Other campus support requests.",
       icon: AlertTriangle,
-      accent: 'text-rose-600',
-      bg: 'bg-rose-50',
     },
   ];
 
   const steps = [
     {
-      number: '01',
-      title: 'Raise Request',
-      desc: 'Select complaint category or outpass destination, set urgency, and attach photos in seconds.',
+      number: "01",
+      title: "Raise Request",
+      desc: "Submit a complaint or outpass request with the required details.",
       icon: Send,
-      previewBadge: 'Step 1 of 4: Initialized',
+      previewBadge: "Request submitted",
     },
     {
-      number: '02',
-      title: 'Request Reviewed',
-      desc: 'Wardens verify guardian consent for outpasses; admins assign technicians to complaints.',
+      number: "02",
+      title: "Request Reviewed",
+      desc: "The appropriate campus team reviews and handles your request.",
       icon: UserCheck,
-      previewBadge: 'Warden Verified',
+      previewBadge: "Under review",
     },
     {
-      number: '03',
-      title: 'Track Progress',
-      desc: 'Follow the animated multi-stage status tracker with real-time comments and technician arrival times.',
+      number: "03",
+      title: "Track Progress",
+      desc: "Follow your request as its status changes.",
       icon: Compass,
-      previewBadge: 'Status: In Progress',
+      previewBadge: "In progress",
     },
     {
-      number: '04',
-      title: 'Get Resolution',
-      desc: 'Receive official resolution notes, closure sign-off, and confirm your safe return to campus.',
+      number: "04",
+      title: "Get Resolution",
+      desc: "Receive the final update when your request is completed.",
       icon: CheckCircle2,
-      previewBadge: 'Resolved & Signed Off',
+      previewBadge: "Resolved",
     },
   ];
 
   const faqs = [
     {
-      q: 'How do complaints work?',
-      a: 'When you submit a complaint, it is automatically cataloged in the campus control desk. Administrators route the ticket to the relevant department (Electrical, Plumbing, IT, etc.), and you can track every status transition live on your interactive timeline.',
+      q: "How do complaints work?",
+      a: "Submit your complaint through Student HelpDesk. The request can then be reviewed, assigned and updated by the responsible campus team.",
     },
     {
-      q: 'Can I submit anonymous complaints?',
-      a: 'Yes! When creating a complaint, you can toggle "Submit Anonymously". Your name and roll number will be masked on public and technician views to ensure safety and comfort when raising sensitive campus concerns.',
+      q: "Can I submit anonymous complaints?",
+      a: "Yes. Sensitive complaints can be submitted using the anonymous option when it is available for the request.",
     },
     {
-      q: 'How does outpass approval work?',
-      a: 'After you submit your departure date, destination, and parent contact details, your hostel warden receives an instant triage notification. Once the warden verifies parental consent, your outpass status transitions to Approved with an official gate authorization note.',
+      q: "How does outpass approval work?",
+      a: "Submit your destination, dates and parent contact details. The request is then sent to the relevant warden for verification.",
     },
     {
-      q: 'Who verifies parents?',
-      a: 'Hostel wardens perform parent verification via direct phone contact or verified parent credentials stored in your student profile, logging audit notes directly onto the request.',
+      q: "Who verifies parents?",
+      a: "The relevant hostel warden handles parent verification for outpass requests.",
     },
     {
-      q: 'How do I know when my request changes?',
-      a: 'Student HelpDesk features an automated campus notification engine. Whenever an admin assigns a technician, changes status, or approves an outpass, an instant notification appears in your slide-over drawer.',
+      q: "How will I know about updates?",
+      a: "Notifications keep you informed when important changes happen to your complaints or outpass requests.",
     },
     {
-      q: 'Can I track old requests?',
-      a: 'Absolutely. All previous complaints and completed outpasses are permanently indexed in your personal history, allowing you to review past resolutions, timestamps, and technician remarks at any time.',
+      q: "Can I view old requests?",
+      a: "Yes. Your previous requests and their status history can remain available in your account.",
     },
   ];
 
+  const services = [
+    {
+      name: "Complaint Management",
+      desc: "Raise and track campus complaints.",
+      icon: MessageSquare,
+    },
+    {
+      name: "Outpass Management",
+      desc: "Apply for and track digital outpasses.",
+      icon: FileText,
+    },
+    {
+      name: "Notifications",
+      desc: "Stay informed about important updates.",
+      icon: Bell,
+    },
+    {
+      name: "Hostel Support",
+      desc: "Connect residents with campus authorities.",
+      icon: Building2,
+    },
+    {
+      name: "Maintenance",
+      desc: "Send problems to the right campus team.",
+      icon: Wrench,
+    },
+    {
+      name: "Student Support",
+      desc: "Manage requests, profile and history.",
+      icon: GraduationCap,
+    },
+  ];
+
+  const whyUs = [
+    {
+      title: "Everything In One Place",
+      desc: "Complaints, outpasses, notifications and history.",
+      icon: Layers,
+    },
+    {
+      title: "Simple Requests",
+      desc: "Clear forms without unnecessary steps.",
+      icon: Send,
+    },
+    {
+      title: "Real-Time Tracking",
+      desc: "Know what is happening with your request.",
+      icon: Compass,
+    },
+    {
+      title: "Instant Notifications",
+      desc: "Stay updated when something changes.",
+      icon: Bell,
+    },
+    {
+      title: "Secure Access",
+      desc: "Role-based access for different campus users.",
+      icon: ShieldCheck,
+    },
+    {
+      title: "Better Administration",
+      desc: "Organized workflows for campus teams.",
+      icon: SlidersHorizontal,
+    },
+  ];
+
+  const active = roles[activeRole];
+  const ActiveIcon = active.icon;
+
   return (
-    <div className="relative overflow-hidden bg-brand-cream selection:bg-brand-teal selection:text-white">
-      {/* Interactive mouse background spotlight */}
-      <div
-        className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300 opacity-60 hidden md:block"
+    <div className="bg-[#07130f] text-[#f4efe5] overflow-hidden">
+      {/* =========================================================
+          FONT + GLOBAL SCROLL
+      ========================================================== */}
+
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+
+          .premium-serif {
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-weight: 400;
+          }
+
+          html {
+            scroll-behavior: smooth;
+          }
+
+          section {
+            scroll-margin-top: 68px;
+          }
+        `}
+      </style>
+
+      {/* =========================================================
+          HERO
+          IMPORTANT:
+          Navbar = 68px
+          Hero = calc(100vh - 68px)
+          Therefore Navbar + Hero = exactly 100vh
+      ========================================================== */}
+
+      <section
+        className="
+          relative
+          min-h-[calc(100vh-68px)]
+          h-[calc(100vh-68px)]
+          overflow-hidden
+          flex items-center
+        "
         style={{
-          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(42, 107, 92, 0.07), transparent 80%)`,
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2200&q=85')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
-      />
+      >
+        {/* DARK HALF-SHADE */}
 
-      {/* ===================== HERO SECTION ===================== */}
-      <section className="relative pt-12 pb-24 lg:pt-20 lg:pb-32 overflow-hidden border-b border-brand-border/60">
-        {/* Subtle decorative background gradient blobs */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[1000px] h-[450px] bg-gradient-to-tr from-brand-teal/10 via-brand-biscuit/20 to-transparent blur-3xl -z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050c09] via-[#07130fe8] via-[48%] to-[#07130e45]" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Hero Left Content */}
-            <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-teal/10 border border-brand-teal/20 text-brand-teal text-xs font-semibold tracking-wide"
+        <div className="absolute inset-0 bg-[#07120e]/20" />
+
+        {/* Gold glow */}
+
+        <div className="absolute top-0 left-[35%] w-[500px] h-[500px] bg-[#c49a45]/10 blur-[130px] rounded-full pointer-events-none" />
+
+        {/* Hero Content */}
+
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="max-w-[650px]">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex items-center gap-3 mb-6 lg:mb-7"
+            >
+              <Sparkles className="w-4 h-4 text-[#c49a45]" />
+
+              <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] font-medium text-[#cdb681]">
+                Campus support, made easier
+              </span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="
+                premium-serif
+                text-[48px]
+                sm:text-[60px]
+                lg:text-[76px]
+                leading-[0.98]
+                tracking-[-0.025em]
+                text-white
+              "
+            >
+              Campus help,
+              <br />
+              <span className="italic text-white">made simple.</span>
+            </motion.h1>
+
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 58, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="h-[2px] bg-[#c49a45] mt-7 mb-6"
+            />
+
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="
+                text-[15px]
+                sm:text-[17px]
+                leading-7
+                text-[#dedbd2]
+                max-w-[590px]
+              "
+            >
+              Raise a complaint, request an outpass, follow updates,
+              and connect with your campus team — without the usual hassle.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.35 }}
+              className="flex flex-col sm:flex-row gap-3 mt-7"
+            >
+              <Link
+                to="/register"
+                className="
+                  inline-flex
+                  items-center
+                  justify-center
+                  gap-4
+                  px-7
+                  py-3.5
+                  rounded-full
+                  bg-[#cda86a]
+                  text-[#10221c]
+                  text-xs
+                  font-bold
+                  uppercase
+                  tracking-[0.15em]
+                  hover:bg-[#ddbd85]
+                  transition-all
+                "
               >
-                <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
-                <span>Next-Generation Campus Service Platform</span>
-              </motion.div>
+                Get Started
+                <ArrowRight className="w-4 h-4" />
+              </Link>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brand-dark tracking-tight leading-[1.15]"
+              <a
+                href="#how-it-works"
+                className="
+                  inline-flex
+                  items-center
+                  justify-center
+                  gap-4
+                  px-7
+                  py-3.5
+                  rounded-full
+                  border
+                  border-[#b9b4a6]/60
+                  text-[#f4efe5]
+                  text-xs
+                  font-bold
+                  uppercase
+                  tracking-[0.15em]
+                  hover:bg-white/10
+                  transition-all
+                "
               >
-                Because your <br className="hidden sm:block" />
-                <span className="bg-gradient-to-r from-brand-teal to-brand-teal-dark bg-clip-text text-transparent">
-                  college life
-                </span>{' '}
-                matters.
-              </motion.h1>
+                See How It Works
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </motion.div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
-              >
-                Raise complaints, apply for outpasses, track requests, and get the help you need — all in one place. Designed for students, trusted by campus authorities.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
-              >
-                <Link
-                  to="/register"
-                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-brand-teal hover:bg-brand-teal-dark text-white font-semibold text-sm shadow-md hover:shadow-teal-glow transition-all flex items-center justify-center gap-2 group"
-                >
-                  <span>Get Started Now</span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-
-                <a
-                  href="#how-it-works"
-                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white hover:bg-brand-cream text-brand-dark font-semibold text-sm border border-brand-border shadow-xs transition-colors flex items-center justify-center gap-2"
-                >
-                  <span>Explore How It Works</span>
-                </a>
-              </motion.div>
-
-              {/* Trust Indicators */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-brand-muted"
-              >
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-brand-gold" />
-                  <span>24/7 Digital Grievance Desk</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-brand-gold" />
-                  <span>Verified Parent Gatepasses</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-brand-gold" />
-                  <span>Dual Admin Governance</span>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Hero Right Visual with Floating UI Notifications */}
-            <div className="lg:col-span-5 relative flex items-center justify-center">
-              {/* Central Campus Visual Card */}
-              <div className="relative w-full max-w-md rounded-3xl p-6 bg-gradient-to-br from-brand-teal-dark via-brand-dark to-[#040A09] text-white shadow-2xl border border-brand-teal/30 overflow-hidden group">
-                <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-brand-teal/30 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-brand-gold/15 rounded-full blur-3xl pointer-events-none" />
-
-                {/* Card Header */}
-                <div className="flex items-center justify-between border-b border-brand-teal/30 pb-4 mb-6 relative z-10">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-3 h-3 rounded-full bg-rose-500/80" />
-                    <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-                    <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                  </div>
-                  <span className="text-[11px] font-mono uppercase tracking-widest text-brand-biscuit/70 font-semibold">
-                    Campus Live Service Desk
-                  </span>
-                </div>
-
-                {/* Card Body - Simulated Campus Interface Preview */}
-                <div className="space-y-4 relative z-10">
-                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-brand-biscuit">Hostel Cauvery Block B</span>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-medium">
-                        Active Triage
-                      </span>
-                    </div>
-                    <div className="text-sm font-semibold text-white">Water Basin Leakage Resolved</div>
-                    <div className="text-xs text-slate-300 mt-1">
-                      Technician visited Room B-304. Joint replaced & verified.
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 pt-1">
-                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
-                      <div className="text-[11px] text-brand-biscuit/80">Avg. Resolution</div>
-                      <div className="text-xl font-bold font-heading text-white mt-0.5">3.4 hrs</div>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
-                      <div className="text-[11px] text-brand-biscuit/80">Outpass Approval</div>
-                      <div className="text-xl font-bold font-heading text-brand-gold mt-0.5">99.2%</div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-brand-teal/20 border border-brand-teal/30 text-xs text-slate-200 flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                      Parent Verification Queue
-                    </span>
-                    <span className="font-semibold text-white font-mono">0 pending</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Pill 1: Outpass Approved */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -top-6 -left-4 sm:-left-8 bg-white/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-brand-border shadow-xl flex items-center gap-3 z-20"
-              >
-                <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
-                  <CheckCircle2 className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-brand-dark">Outpass Request Approved</div>
-                  <div className="text-[10px] text-slate-500">Destination: Bangalore • Gate Pass Active</div>
-                </div>
-              </motion.div>
-
-              {/* Floating Pill 2: Complaint In Progress */}
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                className="absolute -bottom-6 -right-2 sm:-right-6 bg-white/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-brand-border shadow-xl flex items-center gap-3 z-20"
-              >
-                <div className="p-2 rounded-xl bg-amber-50 text-brand-gold">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-brand-dark">Complaint #1042: In Progress</div>
-                  <div className="text-[10px] text-slate-500">Wi-Fi Router Firmware Patch</div>
-                </div>
-              </motion.div>
-
-              {/* Floating Pill 3: Parent Verification */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                className="hidden sm:flex absolute top-1/2 -right-10 bg-white/95 backdrop-blur-md p-2.5 rounded-xl border border-brand-border shadow-lg items-center gap-2 z-20"
-              >
-                <ShieldCheck className="w-4 h-4 text-brand-teal" />
-                <span className="text-[11px] font-semibold text-brand-dark">Parent Verification Complete</span>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===================== PLATFORM ROLES ===================== */}
-      <section id="roles" className="py-20 lg:py-28 bg-white border-b border-brand-border/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-14">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-teal">
-              Designed for Campus Stakeholders
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-brand-dark">
-              Three Distinct, Tailored Experiences
-            </h2>
-            <p className="text-sm sm:text-base text-brand-muted leading-relaxed">
-              Whether you are living in campus housing, overseeing residential safety, or leading administrative operations, Student HelpDesk delivers dedicated workflows.
-            </p>
-          </div>
-
-          {/* Interactive Role Selector Tabs */}
-          <div className="flex justify-center mb-10">
-            <div className="inline-flex p-1.5 rounded-2xl bg-brand-cream border border-brand-border shadow-2xs">
-              {roles.map((r) => {
-                const Icon = r.icon;
-                const isSelected = activeRole === r.id;
-                return (
-                  <button
-                    key={r.id}
-                    onClick={() => setActiveRole(r.id)}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                      isSelected
-                        ? 'bg-brand-teal text-white shadow-sm'
-                        : 'text-slate-600 hover:text-brand-teal'
-                    }`}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="flex flex-wrap gap-x-7 gap-y-3 mt-7"
+            >
+              {["Easy requests", "Live updates", "Secure access"].map(
+                (item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-2 text-xs sm:text-sm text-[#cfcac0]"
                   >
-                    <Icon className="w-4 h-4" />
-                    <span>{r.title.split(' ')[0]}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Active Role Showcase Card */}
-          <div className="max-w-4xl mx-auto">
-            <AnimatePresence mode="wait">
-              {roles
-                .filter((r) => r.id === activeRole)
-                .map((role) => {
-                  const Icon = role.icon;
-                  return (
-                    <motion.div
-                      key={role.id}
-                      initial={{ opacity: 0, scale: 0.98, y: 15 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.98, y: -15 }}
-                      transition={{ duration: 0.3 }}
-                      className="p-8 sm:p-12 rounded-3xl bg-brand-cream border border-brand-border shadow-card-soft"
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-                        <div className="md:col-span-7 space-y-5">
-                          <span className="inline-block text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-brand-biscuit/40 text-brand-gold border border-brand-gold/30">
-                            {role.badge}
-                          </span>
-                          <h3 className="font-heading text-2xl sm:text-3xl font-bold text-brand-dark">
-                            {role.title}
-                          </h3>
-                          <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                            {role.subtitle}
-                          </p>
-
-                          <div className="space-y-2.5 pt-2">
-                            {role.features.map((feat, idx) => (
-                              <div key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-slate-700">
-                                <CheckCircle2 className="w-4 h-4 text-brand-teal shrink-0 mt-0.5" />
-                                <span>{feat}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="pt-4">
-                            <Link
-                              to={role.ctaLink}
-                              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-teal text-white font-semibold text-sm hover:bg-brand-teal-dark shadow-sm transition-colors"
-                            >
-                              <span>{role.ctaText}</span>
-                              <ChevronRight className="w-4 h-4" />
-                            </Link>
-                          </div>
-                        </div>
-
-                        <div className="md:col-span-5 flex justify-center">
-                          <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-3xl bg-gradient-to-br from-brand-teal-dark to-brand-dark p-6 flex flex-col items-center justify-center text-white text-center shadow-xl border border-brand-teal/40">
-                            <Icon className="w-16 h-16 text-brand-gold mb-3 stroke-1" />
-                            <span className="font-heading font-bold text-lg">{role.title}</span>
-                            <span className="text-xs text-brand-biscuit/80 mt-1">Connected Live API</span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-            </AnimatePresence>
+                    <CheckCircle2 className="w-4 h-4 text-[#c49a45]" />
+                    {item}
+                  </div>
+                )
+              )}
+            </motion.div>
           </div>
         </div>
-      </section>
 
-      {/* ===================== WHY STUDENT HELPDESK ===================== */}
-      <section id="why-us" className="py-20 lg:py-28 bg-brand-cream border-b border-brand-border/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-gold">
-              Core Advantages
-            </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-brand-dark">
-              Why Campus Communities Choose Us
-            </h2>
-            <p className="text-sm sm:text-base text-brand-muted leading-relaxed">
-              Replacing fragmented messaging apps, paper outpass logbooks, and physical notice boards with a modern unified platform.
-            </p>
-          </div>
+        {/* HERO SIDE CARDS */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Everything In One Place',
-                desc: 'Consolidate complaints, outpasses, parent verification, technician assignments, and notifications under one unified portal.',
-                icon: Layers,
-              },
-              {
-                title: 'Simple Request Process',
-                desc: 'Intuitive multi-step wizards guide students smoothly through attaching images, selecting categories, and filing requests.',
-                icon: Send,
-              },
-              {
-                title: 'Real-Time Tracking',
-                desc: 'Follow status progressions from Pending to Assigned, In Progress, and Resolved with live timestamps.',
-                icon: Compass,
-              },
-              {
-                title: 'Instant Notifications',
-                desc: 'Automated alerts in the slide-over notification drawer ensure you never miss a technician remark or outpass decision.',
-                icon: Bell,
-              },
-              {
-                title: 'Secure Access & Roles',
-                desc: 'Role-enforced authentication with Django DRF Token safeguards student privacy and institutional records.',
-                icon: ShieldCheck,
-              },
-              {
-                title: 'Dual Administration',
-                desc: 'Admins enjoy the flexibility of our custom React dashboard and the built-in Django superuser administration.',
-                icon: SlidersHorizontal,
-              },
-            ].map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={i}
-                  className="p-7 rounded-2xl bg-white border border-brand-border hover:border-brand-teal/40 shadow-card-soft hover:shadow-card-hover transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-brand-teal/10 text-brand-teal group-hover:bg-brand-teal group-hover:text-white flex items-center justify-center mb-5 transition-colors">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-heading font-bold text-lg text-brand-dark mb-2">
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden lg:flex flex-col gap-3 w-[275px]">
+          {[
+            {
+              icon: CheckCircle2,
+              title: "Request updated",
+              desc: "Your complaint is being handled",
+            },
+            {
+              icon: FileText,
+              title: "Outpass approved",
+              desc: "Ready for your trip",
+            },
+            {
+              icon: Users,
+              title: "Campus team connected",
+              desc: "Your request reached the right team",
+            },
+            {
+              icon: CheckCircle2,
+              title: "Request resolved",
+              desc: "Your issue has been completed",
+            },
+          ].map((item, index) => {
+            const Icon = item.icon;
+
+            return (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.3 + index * 0.1,
+                }}
+                className="
+                  bg-[#f4f0e7]
+                  rounded-l-2xl
+                  px-5
+                  py-3.5
+                  shadow-[0_10px_40px_rgba(0,0,0,0.18)]
+                  flex
+                  items-center
+                  gap-4
+                "
+              >
+                <div className="w-10 h-10 rounded-full bg-[#dce9df] flex items-center justify-center shrink-0">
+                  <Icon className="w-5 h-5 text-[#286052]" />
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold text-[#15241f]">
                     {item.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-brand-muted leading-relaxed">
+                  </p>
+
+                  <p className="text-[11px] text-[#7a817a] mt-1">
                     {item.desc}
                   </p>
                 </div>
-              );
-            })}
-          </div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* ===================== COMMON STUDENT PROBLEMS ===================== */}
-      <section id="problems" className="py-20 lg:py-28 bg-white border-b border-brand-border/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-teal">
-              Problem Categories
+      {/* =========================================================
+          WHITE / CREAM INTRO SECTION
+      ========================================================== */}
+
+      <motion.section
+        id="about"
+        {...sectionAnimation}
+        className="bg-[#f5f1e9] text-[#123f36] border-b border-[#ddd4c5]"
+      >
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 py-10 lg:py-11">
+          <div className="grid lg:grid-cols-[1fr_auto] items-center gap-7">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="w-7 h-px bg-[#c49a45]" />
+
+                <span className="text-[10px] uppercase tracking-[0.25em] font-semibold text-[#a37b3b]">
+                  Built around campus life
+                </span>
+              </div>
+
+              <h2 className="premium-serif text-3xl sm:text-4xl lg:text-[42px] leading-tight">
+                A simpler way to ask for help,
+                <br />
+                <span className="italic text-[#b88d4b]">
+                  whenever you need it.
+                </span>
+              </h2>
+
+              <p className="mt-3 max-w-2xl text-sm text-[#69736e] leading-6">
+                Student HelpDesk brings everyday campus support into
+                one connected experience — from reporting an issue to
+                following what happens next.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap lg:max-w-[360px] gap-2 lg:justify-end">
+              {[
+                "Complaints",
+                "Outpasses",
+                "Notifications",
+                "Student Support",
+              ].map((item) => (
+                <span
+                  key={item}
+                  className="
+                    px-4
+                    py-2
+                    rounded-full
+                    border
+                    border-[#d5cab8]
+                    text-[10px]
+                    uppercase
+                    tracking-[0.15em]
+                    text-[#52615b]
+                  "
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* =========================================================
+          ROLES
+      ========================================================== */}
+
+      <motion.section
+        id="roles"
+        {...sectionAnimation}
+        className="
+          relative
+          bg-[#06130f]
+          text-[#f5eee2]
+          py-14
+          lg:py-16
+          overflow-hidden
+        "
+      >
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_20%,rgba(42,107,92,0.18),transparent_45%)]" />
+
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,0.42)_100%)]" />
+
+        <div className="relative max-w-7xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="max-w-3xl mb-8">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#c49a45]">
+              One platform
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-brand-dark">
-              Common Student Issues We Resolve
+
+            <h2 className="premium-serif text-3xl sm:text-4xl lg:text-5xl mt-2 leading-tight">
+              Different people,
+              <span className="italic text-[#cda86a]">
+                {" "}different needs.
+              </span>
             </h2>
-            <p className="text-sm sm:text-base text-brand-muted leading-relaxed">
-              From dormitory plumbing leaks to urgent weekend outpass approvals, select your category and get matched to the right department.
+
+            <p className="text-[#aebdb5] mt-3 max-w-2xl text-sm leading-6">
+              Students, wardens and administrators each have different
+              responsibilities. Student HelpDesk gives everyone the tools
+              they need in one connected platform.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {problems.map((p, idx) => {
-              const Icon = p.icon;
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            {roles.map((role, index) => {
+              const Icon = role.icon;
+              const selected = activeRole === index;
+
               return (
-                <div
-                  key={idx}
-                  className="p-6 rounded-2xl bg-brand-cream/60 border border-brand-border/80 hover:border-brand-teal/40 hover:bg-white transition-all group flex flex-col justify-between shadow-2xs"
+                <motion.div
+                  key={role.title}
+                  animate={{
+                    y: selected ? -5 : 0,
+                    scale: selected ? 1.015 : 1,
+                    borderColor: selected
+                      ? "rgba(196,154,69,0.75)"
+                      : "rgba(69,105,94,0.5)",
+                  }}
+                  transition={{
+                    duration: 0.5,
+                    ease: "easeOut",
+                  }}
+                  className={`
+                    relative
+                    overflow-hidden
+                    rounded-2xl
+                    px-5
+                    py-5
+                    border
+                    transition-colors
+                    duration-500
+                    ${
+                      selected
+                        ? "bg-[#123f36]"
+                        : "bg-[#0b211b]"
+                    }
+                  `}
                 >
-                  <div>
-                    <div className={`w-11 h-11 rounded-xl ${p.bg} ${p.accent} flex items-center justify-center mb-4 transition-transform group-hover:scale-105`}>
-                      <Icon className="w-5 h-5" />
+                  {selected && (
+                    <motion.div
+                      layoutId="roleGlow"
+                      className="absolute inset-0 pointer-events-none"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.4 }}
+                      style={{
+                        background:
+                          "radial-gradient(circle at 20% 0%, rgba(196,154,69,0.14), transparent 55%)",
+                      }}
+                    />
+                  )}
+
+                  <div className="relative flex items-center gap-4">
+                    <div
+                      className={`
+                        w-10
+                        h-10
+                        rounded-full
+                        flex
+                        items-center
+                        justify-center
+                        shrink-0
+                        ${
+                          selected
+                            ? "bg-[#c49a45] text-[#10221c]"
+                            : "bg-[#102d25] text-[#cda86a]"
+                        }
+                      `}
+                    >
+                      <Icon className="w-4 h-4" />
                     </div>
-                    <h3 className="font-heading font-bold text-base text-brand-dark mb-1.5">
-                      {p.title}
-                    </h3>
-                    <p className="text-xs text-brand-muted leading-relaxed">
-                      {p.desc}
-                    </p>
+
+                    <div>
+                      <p className="text-[9px] uppercase tracking-[0.2em] text-[#c49a45]">
+                        {role.badge}
+                      </p>
+
+                      <h3 className="premium-serif text-xl mt-1">
+                        {role.title}
+                      </h3>
+
+                      <p className="text-xs text-[#aebdb5] mt-1">
+                        {role.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active.title}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.4 }}
+              className="
+                relative
+                rounded-[24px]
+                border
+                border-[#315b50]
+                bg-gradient-to-br
+                from-[#123f36]
+                via-[#0d2c25]
+                to-[#07130f]
+                p-6
+                sm:p-8
+                overflow-hidden
+              "
+            >
+              <div className="absolute right-0 top-0 w-[320px] h-[320px] bg-[#c49a45]/5 blur-[100px] rounded-full" />
+
+              <div className="relative grid lg:grid-cols-[1fr_220px] gap-7 items-center">
+                <div>
+                  <span className="inline-flex px-3 py-1 rounded-full border border-[#c49a45]/30 bg-[#c49a45]/10 text-[#d4b477] text-[9px] uppercase tracking-[0.2em]">
+                    {active.badge}
+                  </span>
+
+                  <h3 className="premium-serif text-3xl sm:text-4xl mt-3">
+                    {active.title}
+                  </h3>
+
+                  <p className="text-[#b8c5bf] text-sm mt-2">
+                    {active.subtitle}
+                  </p>
+
+                  <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2.5 mt-6">
+                    {active.features.map((feature) => (
+                      <div
+                        key={feature}
+                        className="flex items-center gap-3 text-sm text-[#d2dad5]"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-[#c49a45] shrink-0" />
+                        {feature}
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="pt-4 mt-3 border-t border-brand-border/40 flex items-center justify-between text-xs text-brand-teal font-medium">
-                    <span>Direct routing</span>
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
+                  <Link
+                    to="/login"
+                    className="
+                      inline-flex
+                      items-center
+                      gap-3
+                      mt-6
+                      px-6
+                      py-3
+                      rounded-full
+                      bg-[#cda86a]
+                      text-[#10221c]
+                      text-xs
+                      font-semibold
+                      hover:bg-[#ddbd85]
+                      transition-colors
+                    "
+                  >
+                    {active.ctaText}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
+
+                <div className="hidden lg:flex justify-center">
+                  <motion.div
+                    animate={{
+                      rotate: [0, 2, -2, 0],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    className="
+                      w-36
+                      h-36
+                      rounded-full
+                      border
+                      border-[#c49a45]/30
+                      bg-[#06130f]
+                      flex
+                      flex-col
+                      items-center
+                      justify-center
+                      text-center
+                    "
+                  >
+                    <ActiveIcon className="w-8 h-8 text-[#c49a45]" />
+
+                    <span className="premium-serif text-lg mt-3">
+                      {active.title}
+                    </span>
+
+                    <span className="text-[8px] uppercase tracking-[0.18em] text-[#84978f] mt-1">
+                      Connected platform
+                    </span>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </motion.section>
+
+      {/* =========================================================
+          WHY US
+      ========================================================== */}
+
+      <motion.section
+        id="why-us"
+        {...sectionAnimation}
+        className="
+          bg-[#0b1d18]
+          text-[#f5eee2]
+          py-14
+          lg:py-16
+          relative
+          overflow-hidden
+        "
+      >
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_80%_20%,rgba(196,154,69,0.08),transparent_35%)]" />
+
+        <div className="relative max-w-7xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="max-w-2xl mb-8">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#c49a45]">
+              Why Student HelpDesk
+            </span>
+
+            <h2 className="premium-serif text-3xl sm:text-4xl lg:text-5xl mt-2">
+              Less confusion.
+              <span className="italic text-[#cda86a]">
+                {" "}More clarity.
+              </span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {whyUs.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <motion.div
+                  key={item.title}
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  className="
+                    rounded-2xl
+                    border
+                    border-[#29483f]
+                    bg-[#102b24]
+                    p-5
+                  "
+                >
+                  <div className="w-10 h-10 rounded-full bg-[#183e34] flex items-center justify-center mb-4">
+                    <Icon className="w-4 h-4 text-[#cda86a]" />
+                  </div>
+
+                  <h3 className="premium-serif text-xl">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-xs text-[#aebdb5] leading-6 mt-2">
+                    {item.desc}
+                  </p>
+                </motion.div>
               );
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ===================== HOW IT WORKS ===================== */}
-      <section id="how-it-works" className="py-20 lg:py-28 bg-brand-cream border-b border-brand-border/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-gold">
-              Simple 4-Step Journey
+      {/* =========================================================
+          PROBLEMS
+      ========================================================== */}
+
+      <motion.section
+        id="problems"
+        {...sectionAnimation}
+        className="
+          bg-[#f5f1e9]
+          text-[#123f36]
+          py-14
+          lg:py-16
+        "
+      >
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="max-w-2xl mb-8">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#a37b3b]">
+              Campus concerns
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-brand-dark">
-              How Student HelpDesk Operates
+
+            <h2 className="premium-serif text-3xl sm:text-4xl lg:text-5xl mt-2">
+              Problems students
+              <span className="italic text-[#b88d4b]">
+                {" "}face every day.
+              </span>
             </h2>
-            <p className="text-sm sm:text-base text-brand-muted leading-relaxed">
-              Transparent workflows with stage progression indicators keep everyone informed from initial submission to completed sign-off.
+
+            <p className="text-sm text-[#69736e] mt-3 leading-6">
+              From hostel maintenance to academic support, send your
+              request to the right place.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-            {steps.map((st, i) => {
-              const Icon = st.icon;
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {problems.map((problem) => {
+              const Icon = problem.icon;
+
               return (
-                <div
-                  key={i}
-                  className="p-6 rounded-2xl bg-white border border-brand-border shadow-card-soft flex flex-col justify-between relative overflow-hidden"
+                <motion.div
+                  key={problem.title}
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  className="
+                    bg-[#eee8dc]
+                    border
+                    border-[#d8d0c1]
+                    rounded-2xl
+                    p-5
+                  "
                 >
-                  <span className="font-heading text-5xl font-extrabold text-brand-biscuit/40 absolute top-4 right-4 select-none pointer-events-none">
-                    {st.number}
+                  <div className="w-10 h-10 rounded-full bg-[#dce7df] flex items-center justify-center mb-4">
+                    <Icon className="w-4 h-4 text-[#286052]" />
+                  </div>
+
+                  <h3 className="premium-serif text-lg">
+                    {problem.title}
+                  </h3>
+
+                  <p className="text-xs text-[#707872] leading-5 mt-2">
+                    {problem.desc}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* =========================================================
+          HOW IT WORKS
+      ========================================================== */}
+
+      <motion.section
+        id="how-it-works"
+        {...sectionAnimation}
+        className="
+          bg-[#06130f]
+          text-[#f5eee2]
+          py-14
+          lg:py-16
+          relative
+          overflow-hidden
+        "
+      >
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,rgba(42,107,92,0.18),transparent_45%)]" />
+
+        <div className="relative max-w-7xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="max-w-2xl mb-8">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#c49a45]">
+              How it works
+            </span>
+
+            <h2 className="premium-serif text-3xl sm:text-4xl lg:text-5xl mt-2">
+              From request
+              <span className="italic text-[#cda86a]">
+                {" "}to resolution.
+              </span>
+            </h2>
+
+            <p className="text-sm text-[#aebdb5] mt-3 leading-6">
+              A simple process that keeps students and campus teams connected.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((step) => {
+              const Icon = step.icon;
+
+              return (
+                <motion.div
+                  key={step.number}
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  className="
+                    relative
+                    bg-[#0e2922]
+                    border
+                    border-[#294d43]
+                    rounded-2xl
+                    p-5
+                    min-h-[205px]
+                    flex
+                    flex-col
+                    justify-between
+                  "
+                >
+                  <span className="absolute top-4 right-5 premium-serif text-4xl text-[#c49a45]/15">
+                    {step.number}
                   </span>
 
                   <div>
-                    <div className="w-11 h-11 rounded-xl bg-brand-teal/10 text-brand-teal flex items-center justify-center mb-4">
-                      <Icon className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full bg-[#12382f] flex items-center justify-center mb-4">
+                      <Icon className="w-4 h-4 text-[#cda86a]" />
                     </div>
-                    <h3 className="font-heading font-bold text-lg text-brand-dark mb-2">
-                      {st.title}
+
+                    <h3 className="premium-serif text-xl">
+                      {step.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-brand-muted leading-relaxed mb-4">
-                      {st.desc}
+
+                    <p className="text-xs text-[#b8c5bf] leading-6 mt-2">
+                      {step.desc}
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 rounded-full bg-brand-gold" />
-                    <span className="text-[11px] font-mono text-slate-500 font-medium">
-                      {st.previewBadge}
+                  <div className="border-t border-[#35574f] pt-3 mt-4 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#cda86a]" />
+
+                    <span className="text-[9px] uppercase tracking-[0.15em] text-[#aebdb5]">
+                      {step.previewBadge}
                     </span>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ===================== SERVICES ===================== */}
-      <section id="services" className="py-20 lg:py-28 bg-white border-b border-brand-border/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-teal">
-              Campus Offerings
+      {/* =========================================================
+          SERVICES
+          NEW BACKGROUND IMAGE
+          HALF DARK SHADE LIKE HERO
+      ========================================================== */}
+
+      <motion.section
+        id="services"
+        {...sectionAnimation}
+        className="
+          relative
+          min-h-[560px]
+          overflow-hidden
+          text-[#f5eee2]
+        "
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2200&q=85')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* LEFT DARK SHADE */}
+
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06130f] via-[#07130fe8] via-[52%] to-[#07130e45]" />
+
+        {/* Overall subtle shade */}
+
+        <div className="absolute inset-0 bg-[#06130f]/25" />
+
+        {/* Gold glow */}
+
+        <div className="absolute right-[20%] top-0 w-[450px] h-[450px] bg-[#c49a45]/10 blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 py-14 lg:py-16">
+          <div className="max-w-2xl mb-8">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#c49a45]">
+              Services
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-brand-dark">
-              Comprehensive Service Modules
+
+            <h2 className="premium-serif text-3xl sm:text-4xl lg:text-5xl mt-2">
+              Everything your campus
+              <span className="italic text-[#cda86a]">
+                {" "}needs.
+              </span>
             </h2>
-            <p className="text-sm sm:text-base text-brand-muted leading-relaxed">
-              Every critical residential and academic service organized into unified digital management modules.
+
+            <p className="text-sm text-[#d3d9d5] mt-3 leading-6 max-w-xl">
+              One connected platform for everyday student requests,
+              campus support and communication.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'Complaint Management',
-                desc: 'Multi-step complaint wizard with anonymous options, image attachments, and priority triage.',
-                icon: MessageSquare,
-              },
-              {
-                name: 'Outpass Management',
-                desc: 'End-to-end digital gate pass system with parent contact recording and warden approvals.',
-                icon: FileText,
-              },
-              {
-                name: 'Notification Engine',
-                desc: 'Slide-over notification drawer with deep-links, instant alerts, and campus-wide emergency broadcasts.',
-                icon: Bell,
-              },
-              {
-                name: 'Hostel Support',
-                desc: 'Direct communication between hostel residents, block representatives, and resident wardens.',
-                icon: Building2,
-              },
-              {
-                name: 'Maintenance Requests',
-                desc: 'Work order dispatch to campus technicians (plumbing, carpentry, electrical, AC repair).',
-                icon: Wrench,
-              },
-              {
-                name: 'Student Support Services',
-                desc: 'Personalized student home feed, profile management, and history audit logs.',
-                icon: GraduationCap,
-              },
-            ].map((srv, i) => {
-              const Icon = srv.icon;
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {services.map((service) => {
+              const Icon = service.icon;
+
               return (
-                <div
-                  key={i}
-                  className="p-7 rounded-2xl bg-brand-cream/50 border border-brand-border hover:border-brand-teal/40 hover:bg-white transition-all shadow-xs group"
+                <motion.div
+                  key={service.name}
+                  whileHover={{
+                    y: -5,
+                    backgroundColor: "rgba(18,63,54,0.92)",
+                  }}
+                  transition={{ duration: 0.25 }}
+                  className="
+                    bg-[#06130f]/85
+                    backdrop-blur-md
+                    border
+                    border-[#5c685f]/50
+                    rounded-2xl
+                    p-5
+                  "
                 >
-                  <div className="w-12 h-12 rounded-xl bg-brand-teal-dark text-brand-gold flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-                    <Icon className="w-6 h-6" />
+                  <div className="w-10 h-10 rounded-full bg-[#c49a45]/15 border border-[#c49a45]/25 flex items-center justify-center mb-4">
+                    <Icon className="w-4 h-4 text-[#d6b877]" />
                   </div>
-                  <h3 className="font-heading font-bold text-lg text-brand-dark mb-2">
-                    {srv.name}
+
+                  <h3 className="premium-serif text-xl">
+                    {service.name}
                   </h3>
-                  <p className="text-xs sm:text-sm text-brand-muted leading-relaxed">
-                    {srv.desc}
+
+                  <p className="text-xs text-[#c5cec8] leading-6 mt-2">
+                    {service.desc}
                   </p>
-                </div>
+                </motion.div>
               );
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ===================== FAQ ACCORDION ===================== */}
-      <section id="faq" className="py-20 lg:py-28 bg-brand-cream border-b border-brand-border/60">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 mb-14">
-            <span className="text-xs font-bold tracking-widest uppercase text-brand-gold">
-              Got Questions?
+      {/* =========================================================
+          FAQ
+      ========================================================== */}
+
+      <motion.section
+        id="faq"
+        {...sectionAnimation}
+        className="
+          bg-[#0b1d18]
+          text-[#f5eee2]
+          py-14
+          lg:py-16
+        "
+      >
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#c49a45]">
+              Questions
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-brand-dark">
-              Frequently Asked Questions
+
+            <h2 className="premium-serif text-3xl sm:text-4xl lg:text-5xl mt-2">
+              Frequently asked
+              <span className="italic text-[#cda86a]">
+                {" "}questions.
+              </span>
             </h2>
-            <p className="text-sm sm:text-base text-brand-muted">
-              Everything you need to know about navigating the Student HelpDesk platform.
-            </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {faqs.map((faq, index) => {
               const isOpen = openFaq === index;
+
               return (
                 <div
-                  key={index}
-                  className="rounded-2xl bg-white border border-brand-border/80 overflow-hidden shadow-2xs transition-colors"
+                  key={faq.q}
+                  className="
+                    bg-[#102b24]
+                    border
+                    border-[#29483f]
+                    rounded-2xl
+                    overflow-hidden
+                  "
                 >
                   <button
-                    onClick={() => setOpenFaq(isOpen ? -1 : index)}
-                    className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-heading font-bold text-brand-dark hover:text-brand-teal transition-colors"
+                    onClick={() =>
+                      setOpenFaq(isOpen ? -1 : index)
+                    }
+                    className="
+                      w-full
+                      flex
+                      items-center
+                      justify-between
+                      gap-5
+                      px-5
+                      py-4
+                      text-left
+                    "
                   >
-                    <span className="text-sm sm:text-base flex items-center gap-3">
-                      <HelpCircle className="w-4 h-4 text-brand-gold shrink-0" />
+                    <span className="flex items-center gap-3 text-sm font-medium">
+                      <HelpCircle className="w-4 h-4 text-[#cda86a]" />
                       {faq.q}
                     </span>
+
                     <ChevronDown
-                      className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                        isOpen ? 'rotate-180 text-brand-teal' : ''
-                      }`}
+                      className={`
+                        w-4
+                        h-4
+                        text-[#87978f]
+                        transition-transform
+                        ${isOpen ? "rotate-180" : ""}
+                      `}
                     />
                   </button>
 
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="overflow-hidden"
+                        initial={{
+                          height: 0,
+                          opacity: 0,
+                        }}
+                        animate={{
+                          height: "auto",
+                          opacity: 1,
+                        }}
+                        exit={{
+                          height: 0,
+                          opacity: 0,
+                        }}
                       >
-                        <div className="px-5 sm:px-6 pb-6 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100">
+                        <div className="px-5 pb-5 pt-1 text-xs text-[#aebdb5] leading-6 border-t border-[#29483f]">
                           {faq.a}
                         </div>
                       </motion.div>
@@ -798,39 +1261,310 @@ export default function LandingPage() {
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ===================== FINAL CTA ===================== */}
-      <section className="py-20 lg:py-24 bg-brand-teal-dark text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-teal-dark to-brand-dark opacity-90" />
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
-          <span className="inline-block text-xs font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-brand-gold/20 text-brand-gold border border-brand-gold/40">
-            Start Your Experience
-          </span>
-          <h2 className="font-heading text-3xl sm:text-5xl font-extrabold tracking-tight">
-            Elevate Your Campus Life Today.
+      {/* =========================================================
+          FINAL CTA
+      ========================================================== */}
+
+      <motion.section
+        {...sectionAnimation}
+        className="
+          relative
+          bg-[#06130f]
+          overflow-hidden
+          py-14
+          lg:py-16
+        "
+      >
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(42,107,92,0.18),transparent_50%)]" />
+
+        <div className="relative max-w-4xl mx-auto px-6 text-center">
+          <Heart className="w-6 h-6 text-[#cda86a] mx-auto mb-5" />
+
+          <h2 className="premium-serif text-3xl sm:text-4xl lg:text-5xl text-[#f5eee2]">
+            Campus support,
+            <br />
+            <span className="italic text-[#cda86a]">
+              without the hassle.
+            </span>
           </h2>
-          <p className="text-sm sm:text-base text-brand-biscuit max-w-2xl mx-auto leading-relaxed">
-            Join students, wardens, and campus administrators enjoying seamless support, prompt grievance redressal, and hassle-free outpass approvals.
+
+          <p className="max-w-xl mx-auto text-sm text-[#aebdb5] mt-4 leading-6">
+            Raise requests, stay informed and connect with the people
+            responsible for helping you.
           </p>
 
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 mt-7">
             <Link
               to="/register"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-gold hover:bg-brand-gold-hover text-brand-dark font-bold text-sm shadow-lg transition-colors flex items-center justify-center gap-2"
+              className="
+                inline-flex
+                items-center
+                justify-center
+                gap-3
+                px-7
+                py-3.5
+                rounded-full
+                bg-[#cda86a]
+                text-[#10221c]
+                text-xs
+                font-bold
+                uppercase
+                tracking-[0.15em]
+                hover:bg-[#ddbd85]
+                transition-colors
+              "
             >
-              <span>Create Student Account</span>
+              Create Student Account
               <ArrowRight className="w-4 h-4" />
             </Link>
+
             <Link
               to="/login"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 transition-colors"
+              className="
+                inline-flex
+                items-center
+                justify-center
+                px-7
+                py-3.5
+                rounded-full
+                border
+                border-[#52675f]
+                text-[#f5eee2]
+                text-xs
+                font-bold
+                uppercase
+                tracking-[0.15em]
+                hover:bg-white/10
+                transition-colors
+              "
             >
-              Staff & Warden Sign In
+              Sign In
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
+
+      {/* =========================================================
+          FOOTER
+      ========================================================== */}
+
+      <footer className="bg-[#040c09] border-t border-[#20372f] text-[#f5eee2]">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 py-10">
+          <div className="grid md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-8">
+            {/* BRAND */}
+
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#c49a45] flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-[#10221c]" />
+                </div>
+
+                <div>
+                  <h3 className="premium-serif text-xl">
+                    Student HelpDesk
+                  </h3>
+
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#7e9188] mt-0.5">
+                    Campus support made simple
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#8fa099] leading-6 max-w-sm mt-5">
+                A connected platform for students, wardens and
+                administrators to manage everyday campus requests.
+              </p>
+
+              <div className="flex items-center gap-3 mt-5">
+                <a
+                  href="#"
+                  className="
+                    w-8
+                    h-8
+                    rounded-full
+                    border
+                    border-[#30473f]
+                    flex
+                    items-center
+                    justify-center
+                    text-[#9eaaa5]
+                    hover:text-[#cda86a]
+                    hover:border-[#cda86a]
+                    transition-colors
+                  "
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href="mailto:support@studenthelpdesk.com"
+                  className="
+                    w-8
+                    h-8
+                    rounded-full
+                    border
+                    border-[#30473f]
+                    flex
+                    items-center
+                    justify-center
+                    text-[#9eaaa5]
+                    hover:text-[#cda86a]
+                    hover:border-[#cda86a]
+                    transition-colors
+                  "
+                  aria-label="Email"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* PLATFORM */}
+
+            <div>
+              <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#c49a45] font-semibold mb-4">
+                Platform
+              </h4>
+
+              <div className="space-y-2.5">
+                <a
+                  href="#roles"
+                  className="block text-xs text-[#9eaaa5] hover:text-[#f5eee2] transition-colors"
+                >
+                  Roles
+                </a>
+
+                <a
+                  href="#why-us"
+                  className="block text-xs text-[#9eaaa5] hover:text-[#f5eee2] transition-colors"
+                >
+                  Why Us
+                </a>
+
+                <a
+                  href="#problems"
+                  className="block text-xs text-[#9eaaa5] hover:text-[#f5eee2] transition-colors"
+                >
+                  Campus Problems
+                </a>
+
+                <a
+                  href="#how-it-works"
+                  className="block text-xs text-[#9eaaa5] hover:text-[#f5eee2] transition-colors"
+                >
+                  How It Works
+                </a>
+              </div>
+            </div>
+
+            {/* SERVICES */}
+
+            <div>
+              <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#c49a45] font-semibold mb-4">
+                Services
+              </h4>
+
+              <div className="space-y-2.5">
+                <a
+                  href="#services"
+                  className="block text-xs text-[#9eaaa5] hover:text-[#f5eee2] transition-colors"
+                >
+                  Complaints
+                </a>
+
+                <a
+                  href="#services"
+                  className="block text-xs text-[#9eaaa5] hover:text-[#f5eee2] transition-colors"
+                >
+                  Outpasses
+                </a>
+
+                <a
+                  href="#services"
+                  className="block text-xs text-[#9eaaa5] hover:text-[#f5eee2] transition-colors"
+                >
+                  Notifications
+                </a>
+
+                <a
+                  href="#services"
+                  className="block text-xs text-[#9eaaa5] hover:text-[#f5eee2] transition-colors"
+                >
+                  Hostel Support
+                </a>
+              </div>
+            </div>
+
+            {/* CONTACT */}
+
+            <div>
+              <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#c49a45] font-semibold mb-4">
+                Contact
+              </h4>
+
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-4 h-4 text-[#cda86a] mt-0.5 shrink-0" />
+
+                  <span className="text-xs text-[#9eaaa5] leading-5">
+                    Campus Student Support Center
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-[#cda86a] shrink-0" />
+
+                  <span className="text-xs text-[#9eaaa5]">
+                    support@studenthelpdesk.com
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Phone className="w-4 h-4 text-[#cda86a] shrink-0" />
+
+                  <span className="text-xs text-[#9eaaa5]">
+                    Campus Support
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* FOOTER BOTTOM */}
+
+          <div className="border-t border-[#20372f] mt-8 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-[10px] text-[#687b73]">
+              © {new Date().getFullYear()} Student HelpDesk. All rights reserved.
+            </p>
+
+            <div className="flex items-center gap-5">
+              <a
+                href="#faq"
+                className="text-[10px] text-[#687b73] hover:text-[#cda86a] transition-colors"
+              >
+                FAQs
+              </a>
+
+              <Link
+                to="/login"
+                className="text-[10px] text-[#687b73] hover:text-[#cda86a] transition-colors"
+              >
+                Sign In
+              </Link>
+
+              <Link
+                to="/register"
+                className="text-[10px] text-[#687b73] hover:text-[#cda86a] transition-colors"
+              >
+                Register
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

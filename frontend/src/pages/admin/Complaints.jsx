@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Search,
   CheckCircle2,
@@ -46,6 +46,7 @@ export default function AdminComplaints() {
   const [saving, setSaving] = useState(false);
 
   const { addToast } = useToast();
+  const location = useLocation();
 
   const fetchComplaints = async () => {
     try {
@@ -115,6 +116,16 @@ export default function AdminComplaints() {
       item.admin_response || ''
     );
   };
+
+  useEffect(() => {
+    const editComplaint = location.state?.editComplaint;
+
+    if (editComplaint) {
+      openUpdateModal(editComplaint);
+
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleUpdateStatus = async (e) => {
     e.preventDefault();

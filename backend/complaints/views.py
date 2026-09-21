@@ -13,7 +13,7 @@ from .serializers import (
     ComplaintCommentSerializer
 )
 
-from accounts.permissions import IsWarden
+from accounts.permissions import IsAdminOrWarden, IsWarden
 from notifications.utils import create_notification
 
 
@@ -153,7 +153,7 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         methods=['post', 'patch'],
         permission_classes=[
             permissions.IsAuthenticated,
-            IsWarden
+            IsAdminOrWarden,
         ]
     )
     def update_status(self, request, pk=None):
